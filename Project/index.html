@@ -1,0 +1,36 @@
+<!-- index.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Croatia Webshop</title>
+    <link rel="stylesheet" type="text/css" href="frontend/Homepage.css">
+</head>
+<body>
+    <header>
+        <h1>Welcome to Croatia Webshop!</h1>
+    </header>
+    <main>
+        <div id="products"></div>
+    </main>
+
+    <script>
+        fetch('/products')
+            .then(response => response.json())
+            .then(products => {
+                const productsHtml = products.map(product => {
+                    return `
+                        <div class="product">
+                            <img src="${product.image}" alt="${product.name}">
+                            <h2>${product.title.substring(0, 30)}...</h2>
+                            <p>${product.description.substring(0, 100)}...</p>
+                            <p>Price: ${product.price} kn</p>
+                        </div>
+                    `;
+                }).join('');
+                document.getElementById('products').innerHTML = productsHtml;
+            });
+    </script>
+</body>
+</html>
