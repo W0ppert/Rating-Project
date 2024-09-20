@@ -2,12 +2,26 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <script src="backend/login.js"></script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Croatia Webshop</title>
     <link rel="stylesheet" type="text/css" href="frontend/Homepage.css">
 </head>
 <body>
+    <div>
+        <nav>
+          <ul>
+            <li><a href="#">Home</a></li>
+            <li><a href="#">About</a></li>
+            <li><a href="#">Contact</a></li>
+            <li><a href="javascript_login.html">temp login page</a></li>
+          </ul>
+          <button class="profile-button" onclick="showLoginPopup()">Login</button>
+          <div id="login-popup" style="display: none;">
+            <!-- login form will be inserted here -->
+          </div>
+      </div>
     <header>
         <h1>Welcome to Croatia Webshop!</h1>
     </header>
