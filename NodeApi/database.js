@@ -68,9 +68,25 @@ async function getRatingById(id) {
   });
 }
 
+// Fetch all users
+async function getUsers() {
+  const query = 'SELECT id, email, created_at, is_admin FROM users';
+  const [rows] = await db.query(query);
+  return rows;
+}
+
+// Fetch a user by ID
+async function getUserById(id) {
+  const query = 'SELECT id, email, created_at, is_admin FROM users WHERE id = ?';
+  const [rows] = await db.query(query, [id]);
+  return rows[0]; // Assuming the user exists
+}
+
 module.exports = {
   getProducts,
   getProductById,
   getRatings,
-  getRatingById
+  getRatingById,
+  getUsers,
+  getUserById
 };

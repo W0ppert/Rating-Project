@@ -54,6 +54,30 @@ app.get('/ratings/:id', async (req, res) => {
   }
 });
 
+app.get('/users', async (req, res) => {
+  try {
+    const users = await db.getUsers();
+    res.json(users);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Error fetching users' });
+  }
+});
+
+app.get('/users/:id', async (req, res) => {
+  try {
+    const id = req.params.id;
+    const user = await db.getUserById(id);
+    if (user) {
+      res.json(user);
+    } else {
+      res.status(404).json({ message: 'User not found' });
+    }
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Error fetching user' });
+  }
+});
 // Start server
 app.listen(port, () => {
   console.log(`Example app listening on port http://localhost:${port}`);
