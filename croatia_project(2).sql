@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Gegenereerd op: 23 sep 2024 om 10:40
+-- Gegenereerd op: 24 sep 2024 om 10:55
 -- Serverversie: 10.4.32-MariaDB
 -- PHP-versie: 8.2.12
 
@@ -171,20 +171,20 @@ CREATE TABLE `users` (
   `email` varchar(255) NOT NULL,
   `password` varchar(256) NOT NULL,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
-  `is_admin` tinyint(1) NOT NULL DEFAULT 0
+  `is_admin` tinyint(1) NOT NULL DEFAULT 0,
+  `first_name` varchar(50) DEFAULT NULL,
+  `last_name` varchar(50) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Gegevens worden geëxporteerd voor tabel `users`
 --
 
-INSERT INTO `users` (`id`, `email`, `password`, `created_at`, `is_admin`) VALUES
-(3, 'miep@stadion.nl', 'DIKKE', '2024-06-28 11:46:31', 0),
-(11, 'admin@admin.com', 'admin', '2024-07-02 09:37:15', 1),
-(14, 'jordysnel@poep.nl', 'jow', '2024-07-02 16:33:39', 0),
-(15, 'admin2@admin', 'admin', '2024-07-03 10:43:41', 1),
-(17, 'jordysnel@jordy.com', 'jordy', '2024-07-04 06:47:52', 0),
-(18, 'dwayne@hotmail.com', 'dwayne', '2024-09-10 08:51:40', 0);
+INSERT INTO `users` (`id`, `email`, `password`, `created_at`, `is_admin`, `first_name`, `last_name`) VALUES
+(3, 'miep@stadion.nl', 'DIKKE', '2024-06-28 11:46:31', 0, 'miep', 'niglet'),
+(11, 'admin@admin.com', 'admin', '2024-07-02 09:37:15', 1, 'admin', 'admin'),
+(14, 'jordysnel@poep.nl', 'jow', '2024-07-02 16:33:39', 0, 'jordy', 'snool'),
+(18, 'dwayne@hotmail.com', 'dwayne', '2024-09-10 08:51:40', 0, 'dwayne', 'pis');
 
 --
 -- Indexen voor geëxporteerde tabellen
