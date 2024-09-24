@@ -16,6 +16,20 @@ db.connect((error) => {
   console.log('Connected to database');
 });
 
+// Execute a query and return the results as an array of rows
+db.execute = function(query, params) {
+  return new Promise((resolve, reject) => {
+    db.query(query, params, (error, results, fields) => {
+      if (error) {
+        reject(error);
+      } else {
+        resolve(results);
+      }
+    });
+  });
+};
+
+
 // Get all products
 async function getProducts() {
   return new Promise((resolve, reject) => {
@@ -23,7 +37,7 @@ async function getProducts() {
       if (error) {
         reject(error);
       } else {
-        resolve(results);
+        resolve(results); // Return the results array directly
       }
     });
   });
@@ -32,8 +46,9 @@ async function getProducts() {
 // Get product by ID
 async function getProductById(id) {
   return new Promise((resolve, reject) => {
-    db.query(`SELECT * FROM products WHERE id = ${id}`, (error, results) => {
+    db.query('SELECT * FROM products WHERE id = ?', [id], (error, results) => {
       if (error) {
+        console.error(error); // Log the error
         reject(error);
       } else {
         resolve(results[0]);
@@ -41,6 +56,7 @@ async function getProductById(id) {
     });
   });
 }
+
 
 // Get all ratings
 async function getRatings() {
@@ -58,8 +74,9 @@ async function getRatings() {
 // Get rating by ID
 async function getRatingById(id) {
   return new Promise((resolve, reject) => {
-    db.query(`SELECT * FROM ratings WHERE id = ${id}`, (error, results) => {
+    db.query('SELECT * FROM ratings WHERE id = ?', [id], (error, results) => {
       if (error) {
+        console.error(error); // Log the error
         reject(error);
       } else {
         resolve(results[0]);
@@ -67,6 +84,7 @@ async function getRatingById(id) {
     });
   });
 }
+
 
 
 

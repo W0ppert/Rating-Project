@@ -13,7 +13,7 @@ function showLoginPopup() {
         <input type="password" name="password" id="password"/>
         <input type="button" value="Login" id="submit" onclick="validate()"/>
       </form>
-      <span><b class="note">Note : </b>For this demo use following username and password. <br/><b class="valid">User Name : midget<br/>Password : fidget</b></span>
+      <span><b class="note">Note : </b>Enter your username and password to login.</span>
     </div>
   `;
   loginPopup.innerHTML = loginFormHtml;
@@ -23,20 +23,33 @@ function showLoginPopup() {
 function validate(){
   var username = document.getElementById("username").value;
   var password = document.getElementById("password").value;
-  if ( username == "midget" && password == "niglet"){
-    alert ("Login successfully");
-    window.location = "success.html"; // Redirecting to other page.
-    return false;
-  }
-  else{
-    attempt --;// Decrementing by one.
-    alert("You have left "+attempt+" attempt;");
-    // Disabling fields after 3 attempts.
-    if( attempt == 0){
-      document.getElementById("username").disabled = true;
-      document.getElementById("password").disabled = true;
-      document.getElementById("submit").disabled = true;
-      return false;
-    }
-  }
+
+  
+  // Query the database to fetch all users
+  fetch('/users')
+    .then(response => response.json())
+    .then(users => {
+      // Check if the entered username and password match any of the users
+      var userFound = users.find(user => user.username === username && user.password === password);
+      if (userFound) {
+        alert("Login successfully");
+        window.location = "success.html"; // Redirecting to other page.
+        return false;
+      } else {
+        attempt --;// Decrementing by one.
+        alert("You have left "+attempt+" attempt;");
+        // Disabling fields after 3 attempts.
+        if( attempt == 0){
+          document.getElementById("username").disabled = true;
+          document.getElementById("password").disabled = true;
+          document.getElementById("submit").disabled = true;
+          return false;
+        }
+      }
+    })
+    .catch(error => {
+      console.error(error);
+      alert("Error fetching users");
+    });
+
 }
