@@ -150,3 +150,32 @@ app.delete('/users/:id', async (req, res) => {
 app.listen(port, () => {
   console.log(`Example app listening on port http://localhost:${port}`);
 });
+app.get('/reviews', async (req, res) => {
+  try {
+    const reviews = await db.getReviews();
+    res.json(reviews);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Error fetching products' });
+  }
+});
+app.post('/reviews', async (req, res) => {
+  try {
+    const { text, rating } = req.body;
+    const sql = 'INSERT INTO users (text, rating) VALUES (?, ?)';
+    const [result] = await db.execute(sql, [text, rating]);
+    res.status(201).json({ id: result.insertId, text, rating });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+app.delete('/reviews/:id', async (req, res) => {
+  try {
+    const id = req.params.id;
+    const sql = 'DELETE FROM reviews WHERE id =? ';
+    await db.execute(sql, [id]);
+    res.status(204).json({ message: 'Review deleted successfully' });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
