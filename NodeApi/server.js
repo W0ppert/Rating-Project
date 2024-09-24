@@ -20,12 +20,33 @@ app.get('/favicon.ico', (req, res) => {
 // Create API routes
 app.get('/products', async (req, res) => {
   try {
+    const products = await getProducts(); // Call the getProducts function directly
+    res.json(products);
+  } catch (error) {
+    console.error(`Error fetching products: ${error.message}`);
+    console.error(error.stack);
+    res.status(500).json({ message: 'Error fetching products' });
+  }
+});
+
+app.get('/products/:id', async (req, res) => {
+  try {
+    const id = req.params.id;
+    const product = await getProductById(id); // Call the getProductById function directly
+    res.json(product);
+  } catch (error) {
+    console.error(error);
+    res.status(404).json({ message: 'Product not found' });
+  }
+});app.get('/products', async (req, res) => {
+  try {
     const products = await db.getProducts();
     res.json(products);
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: 'Error fetching products' });
-  }
+  console.error(`Error fetching products: ${error.message}`);
+  console.error(error.stack);
+  res.status(500).json({ message: 'Error fetching products' });
+}
 });
 
 app.get('/products/:id', async (req, res) => {
@@ -145,6 +166,7 @@ app.delete('/users/:id', async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 });
+
 
 // Start server
 app.listen(port, () => {
