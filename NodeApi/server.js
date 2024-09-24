@@ -83,6 +83,7 @@ app.get('/ratings/:id', async (req, res) => {
 
 app.get('/users', async (req, res) => {
   try {
+
     const [rows, fields] = await db.execute('SELECT * FROM users');
     res.json(rows);
   } catch (err) {
@@ -166,6 +167,7 @@ app.delete('/users/:id', async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 });
+
 
 
 // Start server

@@ -85,4 +85,13 @@ async function getRatingById(id) {
   });
 }
 
-module.exports = { db, getProducts, getProductById, getRatings, getRatingById };
+
+
+
+module.exports = {
+  getProducts,
+  getProductById,
+  getRatings,
+  getRatingById,
+  
+};
