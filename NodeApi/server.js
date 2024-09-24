@@ -92,6 +92,30 @@ app.get('/users', async (req, res) => {
   }
 });
 
+
+
+// Get user by ID
+app.get('/users/:id', async (req, res) => {
+  try {
+    const userId = req.params.id;
+
+    // Execute a query to get the user by their ID
+    const [rows] = await db.execute('SELECT * FROM users WHERE id = ?', [userId]);
+
+    // If no user is found, return a 404 response
+    if (rows.length === 0) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    // Return the first matching user (since ID is unique)
+    res.json(rows[0]);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'Error fetching user', error: err.message });
+  }
+});
+
+
 app.post('/register', async (req, res) => {
   const { email, password } = req.body;
   try {
@@ -107,16 +131,8 @@ app.post('/register', async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 });
-app.post('/users', async (req, res) => {
-  try {
-    const { email, password } = req.body;
-    const sql = 'INSERT INTO users (email, password) VALUES (?, ?)';
-    const [result] = await db.execute(sql, [email, password]);
-    res.status(201).json({ id: result.insertId, email, password });
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-});
+
+
 
 app.put('/users/:id', async (req, res) => {
   try {
