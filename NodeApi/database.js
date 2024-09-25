@@ -26,6 +26,12 @@ async function getRatings() {
   return results;
 }
 
+async function getReviews() {
+  const [rows] = await pool.query('SELECT * FROM reviews');
+  return rows;
+}
+
+
 // Get rating by ID
 async function getRatingById(id) {
   const [results] = await db.query('SELECT * FROM ratings WHERE id = ?', [id]);
@@ -37,5 +43,6 @@ module.exports = {
   getProducts,
   getProductById,
   getRatings,
-  getRatingById
+  getRatingById,
+  getReviews
 };
