@@ -74,31 +74,15 @@ app.get('/products/:id', async (req, res) => {
     console.error(error);
     res.status(404).json({ message: 'Product not found' });
   }
+
 });
-app.get('/products', async (req, res) => {
-  try {
-    const products = await db.getProducts();
-    res.json(products);
-  } catch (error) {
-  console.error(`Error fetching products: ${error.message}`);
-  console.error(error.stack);
-  res.status(500).json({ message: 'Error fetching products' });
-}
-});
-app.get('/products/:id', async (req, res) => {
-  try {
-    const id = req.params.id;
-    const product = await db.getProductById(id);
-    res.json(product);
-  } catch (error) {
-    console.error(error);
-    res.status(404).json({ message: 'Product not found' });
-  }
-});
+
+
+
 
 app.get('/ratings', async (req, res) => {
   try {
-    const ratings = await db.getRatings();
+    const ratings = await getRatings();
     res.json(ratings);
   } catch (error) {
     console.error(error);
@@ -108,7 +92,7 @@ app.get('/ratings', async (req, res) => {
 app.get('/ratings/:id', async (req, res) => {
   try {
     const id = req.params.id;
-    const rating = await db.getRatingById(id);
+    const rating = await getRatingById(id);
     res.json(rating);
   } catch (error) {
     console.error(error);
@@ -129,20 +113,20 @@ app.get('/users', async (req, res) => {
 
 
 
-// Get user by ID
+
 app.get('/users/:id', async (req, res) => {
   try {
     const userId = req.params.id;
 
-    // Execute a query to get the user by their ID
+    
     const [rows] = await db.execute('SELECT * FROM users WHERE id = ?', [userId]);
 
-    // If no user is found, return a 404 response
+    
     if (rows.length === 0) {
       return res.status(404).json({ message: 'User not found' });
     }
 
-    // Return the first matching user (since ID is unique)
+    
     res.json(rows[0]);
   } catch (err) {
     console.error(err);
@@ -154,17 +138,17 @@ app.get('/users/:id', async (req, res) => {
 app.post('/register', async (req, res) => {
   const { email, password } = req.body;
 
-  // Regular expression for validating an email
+ 
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-  // Check if the email format is valid
+  
   if (!emailRegex.test(email)) {
     return res.status(400).json({ error: 'Invalid email format' });
   }
 
   try {
     const [existingUser] = await db.execute('SELECT * FROM users WHERE email = ?', [email]);
-    if (existingUser && existingUser.length > 0) { // Check if the result is not empty
+    if (existingUser && existingUser.length > 0) { 
       return res.status(400).send({ error: 'User already exists' });
     }
 
@@ -176,6 +160,45 @@ app.post('/register', async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 });
+
+
+app.post('/ratings/:id', async (req, res) => {
+  try {
+    const ratingId = req.params.id;
+    const newRating = parseFloat(req.body.rate);
+
+    if (isNaN(newRating) || newRating < 0 || newRating > 5) {
+      return res.status(400).json({ error: 'Invalid rating value. Please provide a rating between 0 and 5.' });
+    }
+
+    // Fetch the current rating and count from the database
+    const [existingRating] = await db.execute('SELECT rate, count FROM ratings WHERE id = ?', [ratingId]);
+
+    if (existingRating.length === 0) {
+      return res.status(404).json({ error: 'Rating not found' });
+    }
+
+    const currentRating = parseFloat(existingRating[0].rate);
+    const currentCount = parseInt(existingRating[0].count, 10);
+
+    // Calculate the new average rating
+    const updatedCount = currentCount + 1;
+    const updatedRating = ((currentRating * currentCount) + newRating) / updatedCount;
+
+    // Update the rating and count in the database
+    await db.execute('UPDATE ratings SET rate = ?, count = ? WHERE id = ?', [updatedRating.toFixed(2), updatedCount, ratingId]);
+
+    res.json({
+      message: 'Rating updated successfully',
+      rate: updatedRating.toFixed(2),
+      count: updatedCount
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
 
 
 app.put('/users/:id', async (req, res) => {
