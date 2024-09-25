@@ -1,11 +1,18 @@
 const express = require('express');
 const app = express();
+const cors = require('cors'); // Import cors
 const port = 3000;
 const mysql = require('mysql');
 
 // Database connection
 const database = require('./database');
 const { db, getProducts, getProductById, getRatings, getRatingById } = database;
+// Parse JSON bodies
+app.use(express.json());
+
+// Middleware to enable CORS
+app.use(cors()); // Add this line
+
 // Parse JSON bodies
 app.use(express.json());
 
@@ -251,31 +258,28 @@ app.delete('/users/:id', async (req, res) => {
   }
 });
 
-
-
-// Start server
-app.listen(port, () => {
-  console.log(`Example app listening on port http://localhost:${port}`);
-});
 app.get('/reviews', async (req, res) => {
   try {
-    const reviews = await db.getReviews();
-    res.json(reviews);
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: 'Error fetching products' });
+
+    const [rows, fields] = await db.execute('SELECT * FROM reviews');
+    res.json(rows);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'Error fetching reviews', error: err.message });
   }
 });
+
 app.post('/reviews', async (req, res) => {
   try {
     const { text, rating } = req.body;
-    const sql = 'INSERT INTO users (text, rating) VALUES (?, ?)';
+    const sql = 'INSERT INTO reviews (text, rating) VALUES (?, ?)';
     const [result] = await db.execute(sql, [text, rating]);
     res.status(201).json({ id: result.insertId, text, rating });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
 });
+
 app.delete('/reviews/:id', async (req, res) => {
   try {
     const id = req.params.id;
@@ -285,4 +289,10 @@ app.delete('/reviews/:id', async (req, res) => {
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
+});
+
+
+// Start server
+app.listen(port, () => {
+  console.log(`Example app listening on port http://localhost:${port}`);
 });
