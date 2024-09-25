@@ -28,6 +28,42 @@ app.get('/products', async (req, res) => {
     res.status(500).json({ message: 'Error fetching products' });
   }
 });
+app.post('/products', async (req, res) => {
+  try {
+    const { title, price, description, catergory, image } = req.body;
+    const sql = 'INSERT INTO users (title,price,description,catergory,image) VALUES (?, ?)';
+    const [result] = await db.execute(sql, [title, price, description, catergory, image]);
+    res.status(201).json({ id: result.insertId, title, price, description, catergory, image });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+app.delete('/products/:id', async (req, res) => {
+  try {
+    const id = req.params.id;
+    const sql = 'DELETE FROM users WHERE id =? ';
+    await db.execute(sql, [id]);
+    res.status(204).json({ message: 'User deleted successfully' });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+app.put('/products/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { title, price, description, catergory, image } = req.body;
+    const sql = 'UPDATE users SET title = ?, price = ?, description = ?, catergory = ?, image = ? WHERE id = ?';
+    const [result] = await db.execute(sql, [title, price, description, catergory, image, id]);
+
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ message: 'Product not found' });
+    }
+
+    res.status(200).json({ id, title, price, description, catergory, image });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
 
 app.get('/products/:id', async (req, res) => {
   try {
@@ -38,7 +74,8 @@ app.get('/products/:id', async (req, res) => {
     console.error(error);
     res.status(404).json({ message: 'Product not found' });
   }
-});app.get('/products', async (req, res) => {
+});
+app.get('/products', async (req, res) => {
   try {
     const products = await db.getProducts();
     res.json(products);
@@ -48,7 +85,6 @@ app.get('/products/:id', async (req, res) => {
   res.status(500).json({ message: 'Error fetching products' });
 }
 });
-
 app.get('/products/:id', async (req, res) => {
   try {
     const id = req.params.id;
@@ -69,7 +105,6 @@ app.get('/ratings', async (req, res) => {
     res.status(500).json({ message: 'Error fetching ratings' });
   }
 });
-
 app.get('/ratings/:id', async (req, res) => {
   try {
     const id = req.params.id;
