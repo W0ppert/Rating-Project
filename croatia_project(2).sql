@@ -2,10 +2,10 @@
 -- version 5.2.1
 -- https://www.phpmyadmin.net/
 --
--- Host: 127.0.0.1
--- Gegenereerd op: 24 sep 2024 om 12:41
--- Serverversie: 10.4.32-MariaDB
--- PHP-versie: 8.2.12
+-- Host: localhost
+-- Generation Time: Sep 26, 2024 at 09:56 AM
+-- Server version: 10.4.32-MariaDB
+-- PHP Version: 8.2.12
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -24,7 +24,7 @@ SET time_zone = "+00:00";
 -- --------------------------------------------------------
 
 --
--- Tabelstructuur voor tabel `products`
+-- Table structure for table `products`
 --
 
 CREATE TABLE `products` (
@@ -37,7 +37,7 @@ CREATE TABLE `products` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Gegevens worden geëxporteerd voor tabel `products`
+-- Dumping data for table `products`
 --
 
 INSERT INTO `products` (`id`, `title`, `price`, `description`, `category`, `image`) VALUES
@@ -95,23 +95,23 @@ INSERT INTO `products` (`id`, `title`, `price`, `description`, `category`, `imag
 -- --------------------------------------------------------
 
 --
--- Tabelstructuur voor tabel `product_ratings`
+-- Table structure for table `ratings`
 --
 
-CREATE TABLE `product_ratings` (
-  `product_id` int(11) DEFAULT NULL,
-  `rating_rate` decimal(3,2) DEFAULT NULL,
-  `rating_count` int(11) DEFAULT NULL
+CREATE TABLE `ratings` (
+  `id` int(11) DEFAULT NULL,
+  `rate` decimal(3,2) DEFAULT NULL,
+  `count` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Gegevens worden geëxporteerd voor tabel `product_ratings`
+-- Dumping data for table `ratings`
 --
 
-INSERT INTO `product_ratings` (`product_id`, `rating_rate`, `rating_count`) VALUES
-(1, 3.90, 120),
+INSERT INTO `ratings` (`id`, `rate`, `count`) VALUES
+(1, 3.88, 127),
 (2, 4.10, 259),
-(3, 4.70, 500),
+(3, 4.66, 511),
 (4, 3.60, 340),
 (5, 4.90, 70),
 (6, 3.00, 400),
@@ -163,21 +163,31 @@ INSERT INTO `product_ratings` (`product_id`, `rating_rate`, `rating_count`) VALU
 -- --------------------------------------------------------
 
 --
--- Tabelstructuur voor tabel `reviews`
+-- Table structure for table `reviews`
 --
 
 CREATE TABLE `reviews` (
   `id` int(11) NOT NULL,
-  `user` varchar(255) NOT NULL,
+  `user_id` int(11) NOT NULL,
   `text` text NOT NULL,
   `rating` decimal(10,0) NOT NULL,
   `product_id` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Dumping data for table `reviews`
+--
+
+INSERT INTO `reviews` (`id`, `user_id`, `text`, `rating`, `product_id`) VALUES
+(1, 1, 'Great product! Highly recommend it.', 1, 1),
+(8, 2, 'Great product! Highly recommend it.', 3, 1),
+(9, 2, 'Great product! Highly recommend it.', 4, 2),
+(11, 3, 'Great product! Highly recommend it.', 5, 2);
+
 -- --------------------------------------------------------
 
 --
--- Tabelstructuur voor tabel `users`
+-- Table structure for table `users`
 --
 
 CREATE TABLE `users` (
@@ -185,68 +195,62 @@ CREATE TABLE `users` (
   `email` varchar(255) NOT NULL,
   `password` varchar(256) NOT NULL,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
-  `is_admin` tinyint(1) NOT NULL DEFAULT 0
+  `is_admin` tinyint(1) NOT NULL DEFAULT 0,
+  `first_name` varchar(255) NOT NULL,
+  `last_name` varchar(255) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Gegevens worden geëxporteerd voor tabel `users`
+-- Dumping data for table `users`
 --
 
-INSERT INTO `users` (`id`, `email`, `password`, `created_at`, `is_admin`) VALUES
-(3, 'miep@stadion.nl', 'DIKKE', '2024-06-28 11:46:31', 0),
-(11, 'admin@admin.com', 'admin', '2024-07-02 09:37:15', 1),
-(14, 'jordysnel@poep.nl', 'jow', '2024-07-02 16:33:39', 0),
-(15, 'admin2@admin', 'admin', '2024-07-03 10:43:41', 1),
-(17, 'jordysnel@jordy.com', 'jordy', '2024-07-04 06:47:52', 0),
-(18, 'dwayne@hotmail.com', 'dwayne', '2024-09-10 08:51:40', 0);
+INSERT INTO `users` (`id`, `email`, `password`, `created_at`, `is_admin`, `first_name`, `last_name`) VALUES
+(1, 'miep@stadion.nl', 'password', '2024-06-28 11:46:31', 0, 'miep', 'griep'),
+(2, 'admin@admin.com', 'admin', '2024-07-02 09:37:15', 1, '', ''),
+(3, 'jordysnel@poep.nl', 'jow', '2024-07-02 16:33:39', 0, 'jordy', 'snel'),
+(4, 'admin2@admin', 'admin', '2024-07-03 10:43:41', 1, '', ''),
+(5, 'jaap@deltion.nl', 'jordy', '2024-07-04 06:47:52', 0, 'jaap', 'boot'),
+(6, 'dwayne@hotmail.com', 'dwayne', '2024-09-10 08:51:40', 0, 'dwayne', 'piest');
 
 --
--- Indexen voor geëxporteerde tabellen
+-- Indexes for dumped tables
 --
 
 --
--- Indexen voor tabel `products`
+-- Indexes for table `products`
 --
 ALTER TABLE `products`
   ADD PRIMARY KEY (`id`);
 
 --
--- Indexen voor tabel `product_ratings`
---
-ALTER TABLE `product_ratings`
-  ADD KEY `product_id` (`product_id`);
-
---
--- Indexen voor tabel `reviews`
+-- Indexes for table `reviews`
 --
 ALTER TABLE `reviews`
-  ADD PRIMARY KEY (`id`);
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `test` (`user_id`,`product_id`);
 
 --
--- Indexen voor tabel `users`
+-- Indexes for table `users`
 --
 ALTER TABLE `users`
-  ADD PRIMARY KEY (`id`);
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `email` (`email`);
 
 --
--- AUTO_INCREMENT voor geëxporteerde tabellen
+-- AUTO_INCREMENT for dumped tables
 --
 
 --
--- AUTO_INCREMENT voor een tabel `users`
+-- AUTO_INCREMENT for table `reviews`
+--
+ALTER TABLE `reviews`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
+
+--
+-- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
-
---
--- Beperkingen voor geëxporteerde tabellen
---
-
---
--- Beperkingen voor tabel `product_ratings`
---
-ALTER TABLE `product_ratings`
-  ADD CONSTRAINT `product_ratings_ibfk_1` FOREIGN KEY (`product_id`) REFERENCES `products` (`id`);
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

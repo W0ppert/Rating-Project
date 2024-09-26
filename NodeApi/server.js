@@ -87,25 +87,6 @@ app.get('/products/:id', async (req, res) => {
 
 
 
-app.get('/ratings', async (req, res) => {
-  try {
-    const ratings = await getRatings();
-    res.json(ratings);
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: 'Error fetching ratings' });
-  }
-});
-app.get('/ratings/:id', async (req, res) => {
-  try {
-    const id = req.params.id;
-    const rating = await getRatingById(id);
-    res.json(rating);
-  } catch (error) {
-    console.error(error);
-    res.status(404).json({ message: 'Rating not found' });
-  }
-});
 
 app.get('/users', async (req, res) => {
   try {
@@ -143,12 +124,10 @@ app.get('/users/:id', async (req, res) => {
 
 
 app.post('/register', async (req, res) => {
-  const { email, password } = req.body;
+  const { email, password, first_name, last_name } = req.body;
 
- 
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-  
   if (!emailRegex.test(email)) {
     return res.status(400).json({ error: 'Invalid email format' });
   }
@@ -159,14 +138,43 @@ app.post('/register', async (req, res) => {
       return res.status(400).send({ error: 'User already exists' });
     }
 
-    const sql = 'INSERT INTO users (email, password, is_admin) VALUES (?, ?, 0)';
-    const [result] = await db.execute(sql, [email, password]);
-    res.status(201).json({ id: result.insertId, email, password, is_admin: 0 });
+    const sql = 'INSERT INTO users (email, password, first_name, last_name) VALUES (?, ?, ?, ?)';
+    const [result] = await db.execute(sql, [email, password, first_name, last_name]);
+    res.status(201).json({ id: result.insertId, email, password, first_name, last_name });
   } catch (error) {
     console.error(error); // Log the error
     res.status(500).json({ error: error.message });
   }
 });
+
+
+app.post('/login', async (req, res) => {
+  const { email, password } = req.body;
+
+  try {
+    // Check if the user exists
+    const [user] = await db.execute('SELECT * FROM users WHERE email = ?', [email]);
+
+    if (user.length === 0) {
+      // If no user is found with the given email
+      return res.status(400).json({ error: 'Invalid email or password' });
+    }
+
+    // Check if the password matches
+    const storedPassword = user[0].password; // assuming password is stored in plain text (not recommended, should use hashing)
+    if (password !== storedPassword) {
+      return res.status(400).json({ error: 'Invalid email or password' });
+    }
+
+    // If email and password are correct, return success response
+    res.status(200).json({ message: 'Login successful', userId: user[0].id });
+
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
 
 
 app.post('/ratings/:id', async (req, res) => {
@@ -269,18 +277,52 @@ app.get('/reviews', async (req, res) => {
   }
 });
 
+app.get('/reviews/:id', async (req, res) => {
+  try {
+    const { id } = req.params; // Extract id from request parameters
+    const [rows, fields] = await db.execute('SELECT * FROM reviews WHERE product_id = ?', [id]); // Pass the id as an argument
+    res.json(rows);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'Error fetching reviews', error: err.message });
+  }
+});
+
+app.get('/reviews/:id/average', async (req, res) => {
+  try {
+    const { id } = req.params; // Extract id from request parameters
+
+    // SQL query to calculate the average rating for the given product_id
+    const [rows] = await db.execute(
+      'SELECT AVG(rating) AS averageRating FROM reviews WHERE product_id = ?',
+      [id]
+    );
+
+    // Check if there is any rating available for this product_id
+    if (rows.length === 0 || rows[0].averageRating === null) {
+      return res.status(404).json({ message: 'No reviews found for this product' });
+    }
+
+    res.json({ averageRating: rows[0].averageRating });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'Error fetching average rating', error: err.message });
+  }
+});
+
+
 app.post('/reviews', async (req, res) => {
   try {
-    const { user, text, rating, product_id } = req.body;
+    const { user_id, text, rating, product_id } = req.body;
 
     // Ensure all necessary fields are present
-    if (!user || !text || !rating || !product_id) {
-      return res.status(400).json({ error: 'All fields (user, text, rating, product_id) are required.' });
+    if (!user_id || !text || !rating || !product_id) {
+      return res.status(400).json({ error: 'All fields (user_id, text, rating, product_id) are required.' });
     }
 
     // Check if user already submitted a review for this product
-    const checkSql = 'SELECT * FROM reviews WHERE user = ? AND product_id = ?';
-    const [existingReview] = await db.execute(checkSql, [user, product_id]);
+    const checkSql = 'SELECT * FROM reviews WHERE user_id = ? AND product_id = ?';
+    const [existingReview] = await db.execute(checkSql, [user_id, product_id]);
 
     // If the review exists, block the user from submitting another review
     if (existingReview.length > 0) {
@@ -288,10 +330,10 @@ app.post('/reviews', async (req, res) => {
     }
 
     // Insert new review if no existing review was found
-    const sql = 'INSERT INTO reviews (user, text, rating, product_id) VALUES (?, ?, ?, ?)';
-    const [result] = await db.execute(sql, [user, text, rating, product_id]);
+    const sql = 'INSERT INTO reviews (user_id, text, rating, product_id) VALUES (?, ?, ?, ?)';
+    const [result] = await db.execute(sql, [user_id, text, rating, product_id]);
 
-    res.status(201).json({ id: result.insertId, user, text, rating, product_id });
+    res.status(201).json({ id: result.insertId, user_id, text, rating, product_id });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
