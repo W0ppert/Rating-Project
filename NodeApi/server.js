@@ -271,14 +271,32 @@ app.get('/reviews', async (req, res) => {
 
 app.post('/reviews', async (req, res) => {
   try {
-    const { text, rating } = req.body;
-    const sql = 'INSERT INTO reviews (text, rating) VALUES (?, ?)';
-    const [result] = await db.execute(sql, [text, rating]);
-    res.status(201).json({ id: result.insertId, text, rating });
+    const { user, text, rating, product_id } = req.body;
+
+    // Ensure all necessary fields are present
+    if (!user || !text || !rating || !product_id) {
+      return res.status(400).json({ error: 'All fields (user, text, rating, product_id) are required.' });
+    }
+
+    // Check if user already submitted a review for this product
+    const checkSql = 'SELECT * FROM reviews WHERE user = ? AND product_id = ?';
+    const [existingReview] = await db.execute(checkSql, [user, product_id]);
+
+    // If the review exists, block the user from submitting another review
+    if (existingReview.length > 0) {
+      return res.status(400).json({ error: 'You have already submitted a review for this product.' });
+    }
+
+    // Insert new review if no existing review was found
+    const sql = 'INSERT INTO reviews (user, text, rating, product_id) VALUES (?, ?, ?, ?)';
+    const [result] = await db.execute(sql, [user, text, rating, product_id]);
+
+    res.status(201).json({ id: result.insertId, user, text, rating, product_id });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
 });
+
 
 app.delete('/reviews/:id', async (req, res) => {
   try {
