@@ -32,9 +32,9 @@ async function getReviews() {
 }
 
 
-// Get rating by ID
-async function getRatingById(id) {
-  const [results] = await db.query('SELECT * FROM ratings WHERE id = ?', [id]);
+// Get reviws by ID
+async function getReviewsById(product_id) {
+  const [results] = await db.query('SELECT * FROM reviews WHERE product_id = ?', [product_id]);
   return results[0];
 }
 
@@ -43,6 +43,6 @@ module.exports = {
   getProducts,
   getProductById,
   getRatings,
-  getRatingById,
-  getReviews
+  getReviews,
+  getReviewsById                                    
 };

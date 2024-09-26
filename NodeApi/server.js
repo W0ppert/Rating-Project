@@ -279,6 +279,40 @@ app.get('/reviews', async (req, res) => {
   }
 });
 
+app.get('/reviews/:id', async (req, res) => {
+  try {
+    const { id } = req.params; // Extract id from request parameters
+    const [rows, fields] = await db.execute('SELECT * FROM reviews WHERE product_id = ?', [id]); // Pass the id as an argument
+    res.json(rows);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'Error fetching reviews', error: err.message });
+  }
+});
+
+app.get('/reviews/:id/average', async (req, res) => {
+  try {
+    const { id } = req.params; // Extract id from request parameters
+
+    // SQL query to calculate the average rating for the given product_id
+    const [rows] = await db.execute(
+      'SELECT AVG(rating) AS averageRating FROM reviews WHERE product_id = ?',
+      [id]
+    );
+
+    // Check if there is any rating available for this product_id
+    if (rows.length === 0 || rows[0].averageRating === null) {
+      return res.status(404).json({ message: 'No reviews found for this product' });
+    }
+
+    res.json({ averageRating: rows[0].averageRating });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'Error fetching average rating', error: err.message });
+  }
+});
+
+
 app.post('/reviews', async (req, res) => {
   try {
     const { user_id, text, rating, product_id } = req.body;
