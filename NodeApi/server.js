@@ -282,13 +282,13 @@ app.get('/reviews', async (req, res) => {
 app.get('/reviews/:id', async (req, res) => {
   try {
     const { id } = req.params; // Extract id from request parameters
-    const [rows, fields] = await db.execute('SELECT * FROM reviews WHERE product_id = ?', [id]); // Pass the id as an argument
-    res.json(rows);
+    const [rows, fields] = await db.execute('SELECT * FROM reviews WHERE product_id = ?', [id]) // Pass the id as an argument
+    res.json(rows)
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: 'Error fetching reviews', error: err.message });
   }
-});
+})
 
 app.get('/reviews/:id/average', async (req, res) => {
   try {
@@ -315,14 +315,12 @@ app.get('/reviews/:id/average', async (req, res) => {
 
 app.post('/reviews', async (req, res) => {
   try {
-    const { user_id, text, rating, product_id } = req.body;
+    const { user_id, text = '', rating, product_id } = req.body;
 
-    // Ensure all necessary fields are present
-    if (!user_id || !text || !rating || !product_id) {
-      return res.status(400).json({ error: 'All fields (user_id, text, rating, product_id) are required.' });
+    if (!user_id || !rating || !product_id) {
+      return res.status(400).json({ error: 'Fields (user_id, rating, product_id) are required.' });
     }
 
-    // Check if user already submitted a review for this product
     const checkSql = 'SELECT * FROM reviews WHERE user_id = ? AND product_id = ?';
     const [existingReview] = await db.execute(checkSql, [user_id, product_id]);
 
@@ -340,7 +338,6 @@ app.post('/reviews', async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 });
-
 
 app.delete('/reviews/:id', async (req, res) => {
   try {
