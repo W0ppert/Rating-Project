@@ -87,25 +87,6 @@ app.get('/products/:id', async (req, res) => {
 
 
 
-app.get('/ratings', async (req, res) => {
-  try {
-    const ratings = await getRatings();
-    res.json(ratings);
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: 'Error fetching ratings' });
-  }
-});
-app.get('/ratings/:id', async (req, res) => {
-  try {
-    const id = req.params.id;
-    const rating = await getRatingById(id);
-    res.json(rating);
-  } catch (error) {
-    console.error(error);
-    res.status(404).json({ message: 'Rating not found' });
-  }
-});
 
 app.get('/users', async (req, res) => {
   try {
@@ -271,16 +252,16 @@ app.get('/reviews', async (req, res) => {
 
 app.post('/reviews', async (req, res) => {
   try {
-    const { user, text, rating, product_id } = req.body;
+    const { user_id, text, rating, product_id } = req.body;
 
     // Ensure all necessary fields are present
-    if (!user || !text || !rating || !product_id) {
-      return res.status(400).json({ error: 'All fields (user, text, rating, product_id) are required.' });
+    if (!user_id || !text || !rating || !product_id) {
+      return res.status(400).json({ error: 'All fields (user_id, text, rating, product_id) are required.' });
     }
 
     // Check if user already submitted a review for this product
-    const checkSql = 'SELECT * FROM reviews WHERE user = ? AND product_id = ?';
-    const [existingReview] = await db.execute(checkSql, [user, product_id]);
+    const checkSql = 'SELECT * FROM reviews WHERE user_id = ? AND product_id = ?';
+    const [existingReview] = await db.execute(checkSql, [user_id, product_id]);
 
     // If the review exists, block the user from submitting another review
     if (existingReview.length > 0) {
@@ -288,10 +269,10 @@ app.post('/reviews', async (req, res) => {
     }
 
     // Insert new review if no existing review was found
-    const sql = 'INSERT INTO reviews (user, text, rating, product_id) VALUES (?, ?, ?, ?)';
-    const [result] = await db.execute(sql, [user, text, rating, product_id]);
+    const sql = 'INSERT INTO reviews (user_id, text, rating, product_id) VALUES (?, ?, ?, ?)';
+    const [result] = await db.execute(sql, [user_id, text, rating, product_id]);
 
-    res.status(201).json({ id: result.insertId, user, text, rating, product_id });
+    res.status(201).json({ id: result.insertId, user_id, text, rating, product_id });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
