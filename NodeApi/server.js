@@ -150,6 +150,35 @@ app.post('/register', async (req, res) => {
 });
 
 
+app.post('/login', async (req, res) => {
+  const { email, password } = req.body;
+
+  try {
+    // Check if the user exists
+    const [user] = await db.execute('SELECT * FROM users WHERE email = ?', [email]);
+
+    if (user.length === 0) {
+      // If no user is found with the given email
+      return res.status(400).json({ error: 'Invalid email or password' });
+    }
+
+    // Check if the password matches
+    const storedPassword = user[0].password; // assuming password is stored in plain text (not recommended, should use hashing)
+    if (password !== storedPassword) {
+      return res.status(400).json({ error: 'Invalid email or password' });
+    }
+
+    // If email and password are correct, return success response
+    res.status(200).json({ message: 'Login successful', userId: user[0].id });
+
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+
+
 app.post('/ratings/:id', async (req, res) => {
   try {
     const ratingId = req.params.id;
