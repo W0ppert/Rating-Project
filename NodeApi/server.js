@@ -174,7 +174,7 @@ app.post('/ratings/:id', async (req, res) => {
     const ratingId = req.params.id;
     const newRating = parseFloat(req.body.rate);
 
-    if (isNaN(newRating) || newRating < 0 || newRating > 5) {
+    if (isNaN(newRating) || newRating < 1 || newRating > 5) {
       return res.status(400).json({ error: 'Invalid rating value. Please provide a rating between 0 and 5.' });
     }
 
