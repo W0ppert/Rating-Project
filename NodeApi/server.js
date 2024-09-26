@@ -124,12 +124,10 @@ app.get('/users/:id', async (req, res) => {
 
 
 app.post('/register', async (req, res) => {
-  const { email, password } = req.body;
+  const { email, password, first_name, last_name } = req.body;
 
- 
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-  
   if (!emailRegex.test(email)) {
     return res.status(400).json({ error: 'Invalid email format' });
   }
@@ -140,9 +138,9 @@ app.post('/register', async (req, res) => {
       return res.status(400).send({ error: 'User already exists' });
     }
 
-    const sql = 'INSERT INTO users (email, password, is_admin) VALUES (?, ?, 0)';
-    const [result] = await db.execute(sql, [email, password]);
-    res.status(201).json({ id: result.insertId, email, password, is_admin: 0 });
+    const sql = 'INSERT INTO users (email, password, first_name, last_name) VALUES (?, ?, ?, ?)';
+    const [result] = await db.execute(sql, [email, password, first_name, last_name]);
+    res.status(201).json({ id: result.insertId, email, password, first_name, last_name });
   } catch (error) {
     console.error(error); // Log the error
     res.status(500).json({ error: error.message });
