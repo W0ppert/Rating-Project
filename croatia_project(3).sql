@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Generation Time: Sep 26, 2024 at 09:56 AM
+-- Generation Time: Sep 26, 2024 at 12:28 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -179,10 +179,26 @@ CREATE TABLE `reviews` (
 --
 
 INSERT INTO `reviews` (`id`, `user_id`, `text`, `rating`, `product_id`) VALUES
-(1, 1, 'Great product! Highly recommend it.', 1, 1),
-(8, 2, 'Great product! Highly recommend it.', 3, 1),
-(9, 2, 'Great product! Highly recommend it.', 4, 2),
-(11, 3, 'Great product! Highly recommend it.', 5, 2);
+(1, 1, 'Great product! Highly recommend it.', 5, 1),
+(2, 2, 'Good value for money, but could be better.', 3, 2),
+(3, 3, 'Did not meet expectations. Disappointed.', 2, 3),
+(4, 4, 'Fantastic! Works like a charm.', 5, 4),
+(5, 5, 'Decent product, but customer service was lacking.', 3, 5),
+(6, 6, 'Quality is top-notch!', 5, 6),
+(7, 7, 'Terrible experience, would not buy again.', 1, 7),
+(8, 8, 'Great value for the price.', 4, 8),
+(9, 9, 'Not worth the money.', 2, 9),
+(10, 10, 'Amazing features, easy to use!', 5, 10),
+(11, 1, 'Excellent design and build quality.', 5, 2),
+(12, 2, 'Just okay, nothing special.', 3, 3),
+(13, 3, 'Exceptional! Exceeded expectations.', 5, 4),
+(14, 4, 'Average, but does the job.', 3, 5),
+(15, 5, 'Wouldn’t buy again.', 2, 6),
+(16, 6, 'Highly efficient, love it!', 5, 7),
+(17, 7, 'Could be better, but decent for the price.', 3, 8),
+(18, 8, 'Broke after a week, disappointing.', 1, 9),
+(19, 9, 'Amazing quality, highly durable.', 5, 10),
+(20, 10, 'Solid product with great performance.', 4, 1);
 
 -- --------------------------------------------------------
 
@@ -244,7 +260,7 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT for table `reviews`
 --
 ALTER TABLE `reviews`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
 
 --
 -- AUTO_INCREMENT for table `users`
