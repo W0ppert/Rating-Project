@@ -166,8 +166,8 @@ app.post('/login', async (req, res) => {
       return res.status(400).json({ error: 'Invalid email or password' });
     }
 
-    // If email and password are correct, return success response
-    res.status(200).json({ message: 'Login successful', userId: user[0].id });
+    // If email and password are correct, return success response with email
+    res.status(200).json({ userId: user[0].id, email: user[0].email });
 
   } catch (error) {
     console.error(error);
