@@ -159,6 +159,65 @@ app.post('/register', async (req, res) => {
 
 
 
+    if (user.length === 0) {
+      // If no user is found with the given email
+      return res.status(404).json({ error: 'User does not exist' });
+    }
+
+    // Check if the password matches
+    const storedPassword = user[0].password; // assuming password is stored in plain text (not recommended, should use hashing)
+    if (password !== storedPassword) {
+      return res.status(400).json({ error: 'Invalid email or password' });
+    }
+
+    // If email and password are correct, return success response
+    res.status(200).json({ message: 'Login successful', userId: user[0].id });
+
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+
+
+app.post('/ratings/:id', async (req, res) => {
+  try {
+    const ratingId = req.params.id;
+    const newRating = parseFloat(req.body.rate);
+
+    if (isNaN(newRating) || newRating < 1 || newRating > 5) {
+      return res.status(400).json({ error: 'Invalid rating value. Please provide a rating between 0 and 5.' });
+    }
+
+    // Fetch the current rating and count from the database
+    const [existingRating] = await db.execute('SELECT rate, count FROM ratings WHERE id = ?', [ratingId]);
+
+    if (existingRating.length === 0) {
+      return res.status(404).json({ error: 'Rating not found' });
+    }
+
+    const currentRating = parseFloat(existingRating[0].rate);
+    const currentCount = parseInt(existingRating[0].count, 10);
+
+    // Calculate the new average rating
+    const updatedCount = currentCount + 1;
+    const updatedRating = ((currentRating * currentCount) + newRating) / updatedCount;
+
+    // Update the rating and count in the database
+    await db.execute('UPDATE ratings SET rate = ?, count = ? WHERE id = ?', [updatedRating.toFixed(2), updatedCount, ratingId]);
+
+    res.json({
+      message: 'Rating updated successfully',
+      rate: updatedRating.toFixed(2),
+      count: updatedCount
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
 
 
 
