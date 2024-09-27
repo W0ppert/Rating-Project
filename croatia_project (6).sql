@@ -2,10 +2,10 @@
 -- version 5.2.1
 -- https://www.phpmyadmin.net/
 --
--- Host: localhost
--- Generation Time: Sep 26, 2024 at 12:28 PM
--- Server version: 10.4.32-MariaDB
--- PHP Version: 8.2.12
+-- Host: 127.0.0.1
+-- Gegenereerd op: 27 sep 2024 om 08:51
+-- Serverversie: 10.4.32-MariaDB
+-- PHP-versie: 8.0.30
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -24,7 +24,7 @@ SET time_zone = "+00:00";
 -- --------------------------------------------------------
 
 --
--- Table structure for table `products`
+-- Tabelstructuur voor tabel `products`
 --
 
 CREATE TABLE `products` (
@@ -37,7 +37,7 @@ CREATE TABLE `products` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dumping data for table `products`
+-- Gegevens worden geëxporteerd voor tabel `products`
 --
 
 INSERT INTO `products` (`id`, `title`, `price`, `description`, `category`, `image`) VALUES
@@ -95,75 +95,7 @@ INSERT INTO `products` (`id`, `title`, `price`, `description`, `category`, `imag
 -- --------------------------------------------------------
 
 --
--- Table structure for table `ratings`
---
-
-CREATE TABLE `ratings` (
-  `id` int(11) DEFAULT NULL,
-  `rate` decimal(3,2) DEFAULT NULL,
-  `count` int(11) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Dumping data for table `ratings`
---
-
-INSERT INTO `ratings` (`id`, `rate`, `count`) VALUES
-(1, 3.88, 127),
-(2, 4.10, 259),
-(3, 4.66, 511),
-(4, 3.60, 340),
-(5, 4.90, 70),
-(6, 3.00, 400),
-(7, 4.60, 300),
-(8, 4.00, 500),
-(9, 4.80, 240),
-(10, 4.60, 150),
-(11, 4.90, 220),
-(12, 4.80, 260),
-(13, 4.70, 310),
-(14, 4.50, 140),
-(15, 4.20, 500),
-(16, 4.10, 340),
-(17, 3.80, 120),
-(18, 3.50, 900),
-(19, 4.40, 300),
-(20, 4.10, 500),
-(21, 4.80, 950),
-(22, 4.70, 2300),
-(23, 4.60, 150),
-(24, 4.60, 550),
-(25, 4.80, 420),
-(26, 4.20, 500),
-(27, 4.90, 800),
-(28, 4.50, 900),
-(29, 4.40, 1000),
-(30, 4.70, 2000),
-(31, 4.80, 750),
-(32, 4.60, 1500),
-(33, 4.30, 1800),
-(34, 4.90, 2500),
-(35, 4.80, 2400),
-(36, 4.80, 1400),
-(37, 4.50, 1100),
-(38, 4.90, 1800),
-(39, 4.80, 1500),
-(40, 4.60, 2400),
-(41, 4.70, 2200),
-(42, 4.80, 5000),
-(43, 4.60, 900),
-(44, 4.90, 1600),
-(45, 4.70, 1300),
-(46, 4.90, 500),
-(47, 4.50, 800),
-(48, 4.90, 2200),
-(49, 4.80, 1800),
-(50, 4.70, 2800);
-
--- --------------------------------------------------------
-
---
--- Table structure for table `reviews`
+-- Tabelstructuur voor tabel `reviews`
 --
 
 CREATE TABLE `reviews` (
@@ -175,35 +107,19 @@ CREATE TABLE `reviews` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dumping data for table `reviews`
+-- Gegevens worden geëxporteerd voor tabel `reviews`
 --
 
 INSERT INTO `reviews` (`id`, `user_id`, `text`, `rating`, `product_id`) VALUES
-(1, 1, 'Great product! Highly recommend it.', 5, 1),
-(2, 2, 'Good value for money, but could be better.', 3, 2),
-(3, 3, 'Did not meet expectations. Disappointed.', 2, 3),
-(4, 4, 'Fantastic! Works like a charm.', 5, 4),
-(5, 5, 'Decent product, but customer service was lacking.', 3, 5),
-(6, 6, 'Quality is top-notch!', 5, 6),
-(7, 7, 'Terrible experience, would not buy again.', 1, 7),
-(8, 8, 'Great value for the price.', 4, 8),
-(9, 9, 'Not worth the money.', 2, 9),
-(10, 10, 'Amazing features, easy to use!', 5, 10),
-(11, 1, 'Excellent design and build quality.', 5, 2),
-(12, 2, 'Just okay, nothing special.', 3, 3),
-(13, 3, 'Exceptional! Exceeded expectations.', 5, 4),
-(14, 4, 'Average, but does the job.', 3, 5),
-(15, 5, 'Wouldn’t buy again.', 2, 6),
-(16, 6, 'Highly efficient, love it!', 5, 7),
-(17, 7, 'Could be better, but decent for the price.', 3, 8),
-(18, 8, 'Broke after a week, disappointing.', 1, 9),
-(19, 9, 'Amazing quality, highly durable.', 5, 10),
-(20, 10, 'Solid product with great performance.', 4, 1);
+(1, 1, 'Great product! Highly recommend it.', 1, 1),
+(8, 2, 'Great product! Highly recommend it.', 3, 1),
+(9, 2, 'Great product! Highly recommend it.', 4, 2),
+(11, 4, 'Hey hoi het is wel fijn dit product', 5, 2);
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `users`
+-- Tabelstructuur voor tabel `users`
 --
 
 CREATE TABLE `users` (
@@ -217,56 +133,55 @@ CREATE TABLE `users` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dumping data for table `users`
+-- Gegevens worden geëxporteerd voor tabel `users`
 --
 
 INSERT INTO `users` (`id`, `email`, `password`, `created_at`, `is_admin`, `first_name`, `last_name`) VALUES
-(1, 'miep@stadion.nl', 'password', '2024-06-28 11:46:31', 0, 'miep', 'griep'),
+(1, 'miep@stadion.nl', 'DIKKE', '2024-06-28 11:46:31', 0, '', ''),
 (2, 'admin@admin.com', 'admin', '2024-07-02 09:37:15', 1, '', ''),
-(3, 'jordysnel@poep.nl', 'jow', '2024-07-02 16:33:39', 0, 'jordy', 'snel'),
+(3, 'jordysnel@poep.nl', 'jow', '2024-07-02 16:33:39', 0, '', ''),
 (4, 'admin2@admin', 'admin', '2024-07-03 10:43:41', 1, '', ''),
-(5, 'jaap@deltion.nl', 'jordy', '2024-07-04 06:47:52', 0, 'jaap', 'boot'),
-(6, 'dwayne@hotmail.com', 'dwayne', '2024-09-10 08:51:40', 0, 'dwayne', 'piest');
+(5, 'jordysnel@jordy.com', 'jordy', '2024-07-04 06:47:52', 0, '', ''),
+(6, 'dwayne@hotmail.com', 'dwayne1', '2024-09-10 08:51:40', 0, '', '');
 
 --
--- Indexes for dumped tables
+-- Indexen voor geëxporteerde tabellen
 --
 
 --
--- Indexes for table `products`
+-- Indexen voor tabel `products`
 --
 ALTER TABLE `products`
   ADD PRIMARY KEY (`id`);
 
 --
--- Indexes for table `reviews`
+-- Indexen voor tabel `reviews`
 --
 ALTER TABLE `reviews`
   ADD PRIMARY KEY (`id`),
   ADD UNIQUE KEY `test` (`user_id`,`product_id`);
 
 --
--- Indexes for table `users`
+-- Indexen voor tabel `users`
 --
 ALTER TABLE `users`
-  ADD PRIMARY KEY (`id`),
-  ADD UNIQUE KEY `email` (`email`);
+  ADD PRIMARY KEY (`id`);
 
 --
--- AUTO_INCREMENT for dumped tables
+-- AUTO_INCREMENT voor geëxporteerde tabellen
 --
 
 --
--- AUTO_INCREMENT for table `reviews`
+-- AUTO_INCREMENT voor een tabel `reviews`
 --
 ALTER TABLE `reviews`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
 
 --
--- AUTO_INCREMENT for table `users`
+-- AUTO_INCREMENT voor een tabel `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=20;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
