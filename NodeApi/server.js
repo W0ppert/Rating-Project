@@ -6,7 +6,7 @@ const mysql = require('mysql');
 
 // Database connection
 const database = require('./database');
-const { db, getProducts, getProductById, getRatings, getRatingById } = database;
+const { db, getProducts, getProductById  } = database;
 // Parse JSON bodies
 app.use(express.json());
 
@@ -124,7 +124,16 @@ app.get('/users/:id', async (req, res) => {
 
 
 app.post('/register', async (req, res) => {
-  const { email, password, first_name, last_name } = req.body;
+  let { email, password, first_name, last_name } = req.body;
+
+  // If both first_name and last_name are empty, set first_name to "Anonymous"
+  if (!first_name && !last_name) {
+    first_name = "Anonymous";
+  }
+
+  // If first_name or last_name are undefined or empty, set them to null for SQL
+  first_name = first_name || null;
+  last_name = last_name || null;
 
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -134,7 +143,7 @@ app.post('/register', async (req, res) => {
 
   try {
     const [existingUser] = await db.execute('SELECT * FROM users WHERE email = ?', [email]);
-    if (existingUser && existingUser.length > 0) { 
+    if (existingUser && existingUser.length > 0) {
       return res.status(400).send({ error: 'User already exists' });
     }
 
@@ -148,71 +157,8 @@ app.post('/register', async (req, res) => {
 });
 
 
-app.post('/login', async (req, res) => {
-  const { email, password } = req.body;
-
-  try {
-    // Check if the user exists
-    const [user] = await db.execute('SELECT * FROM users WHERE email = ?', [email]);
-
-    if (user.length === 0) {
-      // If no user is found with the given email
-      return res.status(400).json({ error: 'Invalid email or password' });
-    }
-
-    // Check if the password matches
-    const storedPassword = user[0].password; // assuming password is stored in plain text (not recommended, should use hashing)
-    if (password !== storedPassword) {
-      return res.status(400).json({ error: 'Invalid email or password' });
-    }
-
-    // If email and password are correct, return success response with email
-    res.status(200).json({ userId: user[0].id, email: user[0].email });
-
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: error.message });
-  }
-});
 
 
-
-app.post('/ratings/:id', async (req, res) => {
-  try {
-    const ratingId = req.params.id;
-    const newRating = parseFloat(req.body.rate);
-
-    if (isNaN(newRating) || newRating < 1 || newRating > 5) {
-      return res.status(400).json({ error: 'Invalid rating value. Please provide a rating between 0 and 5.' });
-    }
-
-    // Fetch the current rating and count from the database
-    const [existingRating] = await db.execute('SELECT rate, count FROM ratings WHERE id = ?', [ratingId]);
-
-    if (existingRating.length === 0) {
-      return res.status(404).json({ error: 'Rating not found' });
-    }
-
-    const currentRating = parseFloat(existingRating[0].rate);
-    const currentCount = parseInt(existingRating[0].count, 10);
-
-    // Calculate the new average rating
-    const updatedCount = currentCount + 1;
-    const updatedRating = ((currentRating * currentCount) + newRating) / updatedCount;
-
-    // Update the rating and count in the database
-    await db.execute('UPDATE ratings SET rate = ?, count = ? WHERE id = ?', [updatedRating.toFixed(2), updatedCount, ratingId]);
-
-    res.json({
-      message: 'Rating updated successfully',
-      rate: updatedRating.toFixed(2),
-      count: updatedCount
-    });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: error.message });
-  }
-});
 
 
 
@@ -279,8 +225,12 @@ app.get('/reviews', async (req, res) => {
 
 app.get('/reviews/:id', async (req, res) => {
   try {
-    const { id } = req.params; // Extract id from request parameters
-    const [rows, fields] = await db.execute('SELECT * FROM reviews WHERE product_id = ?', [id]) // Pass the id as an argument
+    const { id } = req.params; // Extract id from request parameters SELECT * FROM reviews WHEREc product_id = ?
+    let sql = `SELECT text, rating, concat (first_name, " ", last_name) 
+        FROM reviews 
+        JOIN users ON user_id = users.id
+        WHERE product_id = ?;`;
+    const [rows, fields] = await db.execute(sql, [id]) // Pass the id as an argument
     res.json(rows)
   } catch (err) {
     console.error(err);
