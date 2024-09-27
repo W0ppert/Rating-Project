@@ -157,7 +157,7 @@ app.post('/login', async (req, res) => {
 
     if (user.length === 0) {
       // If no user is found with the given email
-      return res.status(400).json({ error: 'Invalid email or password' });
+      return res.status(404).json({ error: 'User does not exist' });
     }
 
     // Check if the password matches
